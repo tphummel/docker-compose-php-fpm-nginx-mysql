@@ -1,0 +1,30 @@
+version: "3"
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/code
+      - ./site.conf:/etc/nginx/conf.d/site.conf
+    links:
+      - app
+  app:
+    build: .
+    expose:
+      - "9000"
+    volumes:
+      - .:/code
+    links:
+      - db
+  db:
+    image: mysql:5
+    expose:
+      - "3306"
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./db/init:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=app
